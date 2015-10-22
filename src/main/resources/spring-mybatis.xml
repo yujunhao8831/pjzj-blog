@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<context:component-scan base-package="com.blog"/>
+
+	<!-- 加载jdbc.property.properties -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:setting/jdbc.properties</value>
+			</list>
+		</property>
+		<!-- 容许多次加载属性文件 -->
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+
+		<!--&lt;!&ndash; 请求超时时间 &ndash;&gt;-->
+		<!--<property name="checkoutTimeout" value="${jdbc.checkoutTimeout}" />-->
+		<!--&lt;!&ndash; 每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 &ndash;&gt;-->
+		<!--<property name="idleConnectionTestPeriod" value="${jdbc.idleConnectionTestPeriod}" />-->
+		<!--&lt;!&ndash; 连接数据库连接池最大空闲时间 &ndash;&gt;-->
+		<!--<property name="maxIdleTime" value="${jdbc.maxIdleTime}" />-->
+		<!--&lt;!&ndash;当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 &ndash;&gt;-->
+		<!--<property name="acquireIncrement" value="${jdbc.acquireIncrement}" />-->
+		<!--&lt;!&ndash; 连接池初始化连接数 &ndash;&gt;-->
+		<!--<property name="initialPoolSize" value="${jdbc.initPoolSize}" />-->
+		<!--<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />-->
+		<!--<property name="minPoolSize" value="${jdbc.minPoolSize}" />-->
+		<!--<property name="maxStatements" value="${jdbc.maxStatements}" />-->
+
+		<!-- <property name="maxStatementsPerConnection" value="${jdbc.maxStatementsPerConnection}"/> -->
+	</bean>
+
+	<!-- 配置mybatis Session工厂 SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 和mybatis进行整合 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml"/>
+		<property name="mapperLocations" value="classpath:com/blog/mapper/*.xml"/>
+	</bean>
+
+
+	<!-- spring的事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- 事务通知 -->
+	<tx:advice id="advice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="do*" propagation="REQUIRED" />
+			<!-- hibernate4必须配置为开启事务 否则 getCurrentSession()获取不到,以下为查询等等 -->
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="count*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="select*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="load*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="list*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config expose-proxy="true">
+		<aop:pointcut expression="execution(* com.blog.core.base.*.*(..))" id="pointcut" />
+		<aop:advisor advice-ref="advice" pointcut-ref="pointcut" />
+	</aop:config>
+
+
+
+</beans>
