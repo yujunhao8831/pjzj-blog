@@ -14,11 +14,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class IndexController extends BaseController {
 
 
-    @RequestMapping(value = "/",method = RequestMethod.GET)
+    @RequestMapping(value = {"","index","*"},method = RequestMethod.GET)
     public String index () {
-        return "index";
+        return "index/index";
     }
 
+    @RequestMapping(value = "top",method = RequestMethod.GET)
+    public String top () {
+        return "index/top";
+    }
+
+    @RequestMapping(value = "main",method = RequestMethod.GET)
+    public String main () {
+        return "index/main";
+    }
+    @RequestMapping(value = "bottom",method = RequestMethod.GET)
+    public String bottom () {
+        return "index/bottom";
+    }
 
 
 }
