@@ -38,7 +38,12 @@
 	<!-- 表示当访问主页时自动转发到index控制器。 -->
 	<!-- <mvc:view-controller path="/" view-name="forward:/loginAction/loginUI" /> -->
 
-
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*"/>
+			<bean class="com.blog.interceptor.RequestMessageInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
 
 
 	<!-- 支持上传文件 -->
