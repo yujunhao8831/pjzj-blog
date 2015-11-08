@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.blog.domain.History" >
+
+    <resultMap id="HistoryResultMap" type="History">
+        <id column="id_" property="id"/>
+        <result property="parentId" column="parent_id_"/>
+        <result property="historyDate" column="history_date_" />
+        <result property="historyMessage" column="history_message_"/>
+        <result property="historyType" column="history_type_"/>
+    </resultMap>
+
+    <sql id="HistoryFields">
+        id_,parent_id_,history_date_,history_message_,history_type_
+    </sql>
+
+    <insert id="insert" parameterType="User" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO history_(parent_id_,history_date_,history_message_,history_type_)
+          VALUES (#{parentId},#{historyDate},#{historyMessage},#{historyType})
+    </insert>
+
+    <update id="update" parameterType="User">
+        UPDATE history_
+          SET history_date_ = #{historyDate},history_message_ = #{historyMessage},history_type_ = #{historyType}
+          WHERE id_ = #{id}
+    </update>
+
+    <select id="selectById" parameterType="User" resultMap="HistoryResultMap">
+        SELECT * FROM history_ WHERE id_ = #{id}
+    </select>
+
+
+
+
+    <delete id="delete">
+
+    </delete>
+
+    
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

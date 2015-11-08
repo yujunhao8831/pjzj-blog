@@ -11,11 +11,12 @@
 
 
 	<!-- 自动扫描与装配Bean -->
-	<context:component-scan base-package="com.blog,com.blog.core" use-default-filters="false">
+	<context:component-scan base-package="com.blog.controller" use-default-filters="false">
 		<!-- use-default-filters="false" : 不适用默认的扫描器 -->
-		<!-- @Controller @ControllerAdvice 只对这两个注解进行扫描, 这样可以解决和Spring IOC容器同时扫描两次,创建两次Bean实例的问题 -->
+		<!-- @Controller @ControllerAdvice @RestController 只对这3个注解进行扫描, 这样可以解决和Spring IOC容器同时扫描两次,创建两次Bean实例的问题 -->
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
 	</context:component-scan>
 
 	<!-- 默认的注解映射的支持 -->

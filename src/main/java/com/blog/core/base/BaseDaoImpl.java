@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class BaseDaoImpl<M extends Serializable> extends SqlSessionDaoSupport implements BaseDao<M> {
 
-	private final  Class<M> modelClass;
+	protected final  Class<M> modelClass;
 
 	public BaseDaoImpl() {
 		// 通过ReflectBaseGenericsTypesUtil.getBaseGenericsTypes得到 Model

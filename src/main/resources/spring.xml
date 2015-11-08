@@ -15,12 +15,13 @@
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 
 	<!-- 注解搜索路径 com.springmvc,core.com.springmvc com.springmvc || core.com.springmvc ??? -->
-	<context:component-scan base-package="com.blog">
+	<context:component-scan base-package="com.blog,com.blog.core">
 		<!-- 注解 : @Controller 注解 : @ControllerAdvice @RestController 这3个注解不进行扫描 -->
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
 	</context:component-scan>
-
+	
+	<import resource="spring-mybatis.xml"/>
 
 </beans>

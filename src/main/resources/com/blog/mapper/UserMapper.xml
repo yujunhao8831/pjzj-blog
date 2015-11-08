@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.blog.domain.User" >
+
+    <resultMap id="UserResultMap" type="User" >
+        <id column="id_" property="id" ></id>
+        <result column="username_" property="username" ></result>
+        <result column="password_" property="password"></result>
+        <!-- 配置映射的关联的用户信息 -->
+        <!--
+            association : 用于映射关联查询单个对象的信息
+            property    : 要将关联查询的用户信息映射到User中哪个属性
+        -->
+        <!--<association property="historyList" javaType="History" >-->
+            <!--<id property="id" column="id_"/>-->
+            <!--<result property="historyType" column="history_type_"/>-->
+            <!--<result property="historyMessage" column="history_message_"/>-->
+            <!--<result property="historyDate" column="history_date_"/>-->
+            <!--<result property="parentId" column="parent_id_"/>-->
+        <!--</association>-->
+
+        <collection property="historyList" ofType="History">
+            <id property="id" column="id_"/>
+            <result property="historyType" column="history_type_"/>
+            <result property="historyMessage" column="history_message_"/>
+            <result property="historyDate" column="history_date_"/>
+            <result property="parentId" column="parent_id_"/>
+        </collection>
+    </resultMap>
+
+
+    <sql id="UserFields">
+        id_,username_,password_
+    </sql>
+
+
+    <!-- =========================================================================== -->
+    <insert id="insert" parameterType="User">
+        <!--
+            将插入数据的主键返回，返回到user对象中
+            SELECT LAST_INSERT_ID()：得到刚insert进去记录的主键值，只适用与自增主键
+            keyProperty : 将查询到主键值设置到parameterType指定的对象的哪个属性 
+            order       : SELECT LAST_INSERT_ID()执行顺序，相对于insert语句来说它的执行顺序
+            resultType  : 指定SELECT LAST_INSERT_ID()的结果类型
+        -->
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO user_( username_,password_ )
+        VALUES ( #{username},#{password});
+    </insert>
+
+    <update id="update" parameterType="User">
+        UPDATE user_ SET
+          username_ = #{username},password_ = #{password}
+          WHERE id_ = #{id}
+    </update>
+
+    <select id="selectById" parameterType="long" resultMap="UserResultMap">
+        SELECT * FROM  user_ WHERE id_ = #{id}
+    </select>
+
+    <select id="selectByIds" parameterType="arraylist" resultMap="UserResultMap">
+        SELECT * FROM  user_
+        <where>
+          <if test="array != null">
+            <foreach collection="array" item="id" open="AND (" close=")" separator="or">
+                id_ = #{id}
+            </foreach>
+          </if>
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="UserResultMap" >
+        SELECT * FROM  user_
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM user_ WHERE id_ = #{id}
+    </delete>
+
+    <!-- ================================================================================  -->
+
+    <select id="selectUserHistoryByUserId" parameterType="long" resultMap="UserResultMap">
+        SELECT  user_.*,history_.*
+          FROM user_,history_
+          WHERE user_.id_ = history_.parent_id_
+                AND user_.id_ = #{id}
+    </select>
+
+    
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
