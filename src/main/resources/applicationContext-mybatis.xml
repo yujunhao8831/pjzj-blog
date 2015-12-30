@@ -56,7 +56,7 @@
 
 	<!-- spring的事务管理器 -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"></property>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<!-- 事务通知 -->
@@ -69,7 +69,6 @@
 			<tx:method name="update*" propagation="REQUIRED" />
 			<tx:method name="edit*" propagation="REQUIRED" />
 			<tx:method name="do*" propagation="REQUIRED" />
-			<!-- hibernate4必须配置为开启事务 否则 getCurrentSession()获取不到,以下为查询等等 -->
 			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="count*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="find*" propagation="REQUIRED" read-only="true" />

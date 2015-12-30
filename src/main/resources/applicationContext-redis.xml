@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!-- 加载redis配置文件 -->
+    <context:property-placeholder location="classpath:redis/redis.properties"/>
+
+
+
+    <bean id="jedisShardInfo" class="redis.clients.jedis.JedisShardInfo">
+        <constructor-arg index="0" type="java.lang.String" value="127.0.0.1"/>
+        <constructor-arg index="1" type="int" value="6379"/>
+        <constructor-arg index="2" type="int" value="100000"/>
+        <!--<property name="connectionTimeout" value=""/>-->
+        <!--<property name="password" value="" />-->
+        <!--<property name="soTimeout" value="" />-->
+    </bean>
+
+    <bean  id="jedis" class="redis.clients.jedis.Jedis">
+        <constructor-arg type="redis.clients.jedis.JedisShardInfo" ref="jedisShardInfo"/>
+    </bean>
+
+
+    <!-- 项目中目前使用-Redis非切片池 -->
+    <!-- Redis非切片池 -->
+    <bean id="shardedJedis" class="redis.clients.jedis.ShardedJedis">
+        <constructor-arg>
+            <bean class="redis.clients.jedis.JedisShardInfo" >
+                <!--String host, int port, int timeout, int weight-->
+                <constructor-arg index="0" type="java.lang.String" value="127.0.0.1"/>
+                <constructor-arg index="1" type="int" value="6379"/>
+                <constructor-arg index="2" type="int" value="100000"/>
+                <!--<constructor-arg index="3" type="java.lang.String" value=""/>-->
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!-- 切片池,集群考虑. 暂时搁置 -->
+    <!--<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">-->
+    <!--<constructor-arg index="0" ref="jedisPoolConfig"/>-->
+    <!--<constructor-arg index="1">-->
+    <!--<list>-->
+    <!-- 第一台 -->
+    <!--<bean class="redis.clients.jedis.JedisShardInfo">-->
+    <!--<constructor-arg value="127.0.0.1"/>-->
+    <!--<constructor-arg type="int" value="6379"/>-->
+    <!--<constructor-arg value="instance:01"/>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;<bean class="redis.clients.jedis.JedisShardInfo">&ndash;&gt;-->
+    <!--&lt;!&ndash;<constructor-arg value="127.0.0.1"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<constructor-arg type="int" value="7001"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<constructor-arg value="instance:02"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+    <!--&lt;!&ndash;<bean class="redis.clients.jedis.JedisShardInfo">&ndash;&gt;-->
+    <!--&lt;!&ndash;<constructor-arg value="127.0.0.1"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<constructor-arg type="int" value="7003"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<constructor-arg value="instance:03"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+    <!--</list>-->
+    <!--</constructor-arg>-->
+    <!--</bean>-->
+
+
+
+    <!-- Spring-data-Redis template 项目中没用到,要用可自行注入 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="minIdle" value="2"></property>
+        <property name="maxWaitMillis" value="15000"></property>
+        <property name="minEvictableIdleTimeMillis" value="300000"></property>
+        <property name="numTestsPerEvictionRun" value="3"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"></property>
+        <property name="testOnBorrow" value="true"></property>
+        <property name="testOnReturn" value="true"></property>
+        <property name="testWhileIdle" value="true"></property>
+    </bean>
+
+
+
+
+
+</beans>
