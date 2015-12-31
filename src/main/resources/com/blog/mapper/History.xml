@@ -5,7 +5,7 @@
 <mapper namespace="com.blog.domain.History" >
 
     <resultMap id="HistoryResultMap" type="History">
-        <id column="id_" property="id"/>
+        <id     property="id"   column="id_" />
         <result property="parentId" column="parent_id_"/>
         <result property="historyDate" column="history_date_" />
         <result property="historyMessage" column="history_message_"/>

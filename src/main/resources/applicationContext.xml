@@ -22,4 +22,7 @@
 	</context:component-scan>
 	
 	<import resource="applicationContext-mybatis.xml"/>
+	<import resource="applicationContext-redis.xml"/>
+
+
 </beans>
