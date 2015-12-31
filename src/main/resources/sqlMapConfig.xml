@@ -14,8 +14,8 @@
         <!-- 单个别名定义 -->
         <!--<typeAlias type="User" alias="user"/> -->
         <!-- 批量别名定义 指定包名,mybatis会自动扫描包中的实体类,自动定义别名,别名就是类名(首字母大写或小写都行) -->
-        <package name="com.hna.salary.account.pojo" />
-        <package name="com.hna.salary.*.pojo" />
+        <package name="com.blog.domain"/>
+        <!--<package name="com.hna.salary.*.pojo"/>-->
     </typeAliases>
     <!--
         分页插件
@@ -61,8 +61,7 @@
         </plugin>
 
         <!-- 性能拦截器，用于输出每条 SQL 语句及其执行时间  -->
-        <plugin interceptor="com.hna.common.interceptor.PerformanceInterceptor">
-        </plugin>
+        <plugin interceptor="com.blog.interceptor.PerformanceInterceptor"/>
 
     </plugins>
 </configuration>
